@@ -9,14 +9,6 @@ import (
 	"github.com/warete/alice_kuzya_proxy/pkg/aqara"
 )
 
-type KuzyaPayload struct {
-	Value      string `json:"value"`
-	SceneIdOn  string `json:"sceneIdOn"`
-	SceneIdOff string `json:"sceneIdOff"`
-	DeviceId   string `json:"deviceId"`
-	ResourceId string `json:"resourceId"`
-}
-
 type MainConfig struct {
 	Aqara aqara.AqaraConfig `mapstructure:"aqara"`
 }

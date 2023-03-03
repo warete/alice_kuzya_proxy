@@ -16,26 +16,6 @@ import (
 	"github.com/warete/alice_kuzya_proxy/pkg/serviceproxy"
 )
 
-type AqaraPayload struct {
-	Intent string      `json:"intent"`
-	Data   interface{} `json:"data"`
-}
-
-type ResourceHistoryItem struct {
-	ResourceId string `json:"resourceId"`
-	SubjectId  string `json:"subjectId"`
-	TimeStamp  int64  `json:"timeStamp"`
-	Value      string `json:"value"`
-}
-
-type ResourceHistoryResult struct {
-	Data []ResourceHistoryItem `json:"data"`
-}
-
-type ResourceHistoryResponse struct {
-	Result ResourceHistoryResult `json:"result"`
-}
-
 type IAqara interface {
 	serviceproxy.IServiceProxy
 	sendRequest(method string, params url.Values, body AqaraPayload) (string, error)
@@ -55,12 +35,49 @@ func NewAqara(config AqaraConfig) (IAqara, error) {
 
 func (a AqaraImpl) AddRoutes(r *gin.Engine) {
 	r.GET("/aqara", func(c *gin.Context) {
-		res, err := a.GetResourceHistory("lumi.54ef44100050f25e", "4.1.85", time.Now().Add(-24*time.Hour).Unix()*1000, time.Now().Unix()*1000)
+
+		payload := new(KuzyaPayload)
+		err := c.BindJSON(payload)
+
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		c.IndentedJSON(http.StatusOK, res[0].Value)
+
+		if payload.Value != "{value}" && len(payload.SceneIdOn) > 0 && len(payload.SceneIdOff) > 0 {
+			var sceneIdToExec string
+			if payload.Value == "1" {
+				sceneIdToExec = payload.SceneIdOn
+			} else {
+				sceneIdToExec = payload.SceneIdOff
+			}
+			err = a.ExecScene(sceneIdToExec)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			c.IndentedJSON(http.StatusOK, gin.H{"result": true})
+			return
+		} else if payload.Value == "{value}" && len(payload.DeviceId) > 0 && len(payload.ResourceId) > 0 {
+			res, err := a.GetResourceHistory(payload.DeviceId, payload.ResourceId, time.Now().Add(-24*time.Hour).Unix()*1000, time.Now().Unix()*1000)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			val, err := strconv.Atoi(res[0].Value)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			resVal := true
+			if val == 0 {
+				resVal = false
+			}
+			c.IndentedJSON(http.StatusOK, gin.H{"value": resVal})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Unknown action"})
 	})
 }
 
