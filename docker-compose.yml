@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  app:
+    image: egoriv/alice_kuzya_proxy:latest
+    build: .
+    restart: always
+    ports:
+      - 8081:8080
+    volumes:
+      - ./config.yml:/app/config.yml
