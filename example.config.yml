@@ -1,4 +1,5 @@
 port: 8080
+secret_key: qwerty
 aqara:
   api_url: https://open-ru.aqara.com/v3.0/open/api
   app_id: 12345

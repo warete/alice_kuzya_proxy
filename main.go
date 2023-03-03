@@ -10,8 +10,21 @@ import (
 )
 
 type MainConfig struct {
-	Port  string            `mapstructure:"port"`
-	Aqara aqara.AqaraConfig `mapstructure:"aqara"`
+	Port      string            `mapstructure:"port"`
+	SecretKey string            `mapstructure:"secret_key"`
+	Aqara     aqara.AqaraConfig `mapstructure:"aqara"`
+}
+
+func KeyAuthMiddleware(trueKey string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		secretKey := c.Query("secret")
+		if len(secretKey) == 0 || secretKey != trueKey {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Not authorized"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }
 
 func main() {
@@ -28,9 +41,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	//TODO: make auth by secret key
-
 	r := gin.Default()
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(KeyAuthMiddleware(cfg.SecretKey))
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
