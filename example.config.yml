@@ -1,3 +1,4 @@
+port: 8080
 aqara:
   api_url: https://open-ru.aqara.com/v3.0/open/api
   app_id: 12345

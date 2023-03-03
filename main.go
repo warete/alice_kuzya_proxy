@@ -10,6 +10,7 @@ import (
 )
 
 type MainConfig struct {
+	Port  string            `mapstructure:"port"`
 	Aqara aqara.AqaraConfig `mapstructure:"aqara"`
 }
 
@@ -38,5 +39,5 @@ func main() {
 
 	aq.AddRoutes(r)
 
-	r.Run("0.0.0.0:8080")
+	r.Run("0.0.0.0:" + cfg.Port)
 }
