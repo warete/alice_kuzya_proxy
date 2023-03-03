@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/warete/aqara_alice_proxy/pkg/serviceproxy"
+	"github.com/warete/alice_kuzya_proxy/pkg/serviceproxy"
 )
 
 type AqaraPayload struct {

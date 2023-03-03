@@ -1,4 +1,4 @@
-module github.com/warete/aqara_alice_proxy
+module github.com/warete/alice_kuzya_proxy
 
 go 1.16
 

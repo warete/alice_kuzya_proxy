@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/warete/aqara_alice_proxy/pkg/aqara"
+	"github.com/warete/alice_kuzya_proxy/pkg/aqara"
 )
 
 type KuzyaPayload struct {
