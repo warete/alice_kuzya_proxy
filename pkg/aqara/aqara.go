@@ -34,7 +34,7 @@ func NewAqara(config AqaraConfig) (IAqara, error) {
 }
 
 func (a AqaraImpl) AddRoutes(r *gin.Engine) {
-	r.GET("/aqara", func(c *gin.Context) {
+	r.POST("/aqara", func(c *gin.Context) {
 
 		payload := new(KuzyaPayload)
 		err := c.BindJSON(payload)
