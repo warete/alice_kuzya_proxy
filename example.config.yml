@@ -1,0 +1,6 @@
+aqara:
+  api_url: https://open-ru.aqara.com/v3.0/open/api
+  app_id: 12345
+  access_token: azg1g21yhjn1j2
+  key_id: K.1234233241
+  app_key: 534as24az1g1g21yhjn1j2
