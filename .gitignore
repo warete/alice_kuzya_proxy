@@ -28,5 +28,5 @@ go.work
 
 .vscode
 .idea
-
+/bin/*
 /config.yml
